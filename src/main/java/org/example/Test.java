@@ -1,5 +1,6 @@
-package org.example.entities;
+package org.example;
 
+import org.example.entities.Produit;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.MetadataSources;
