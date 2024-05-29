@@ -4,6 +4,8 @@
         "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
 <hibernate-configuration>
     <session-factory>
-        <mapping class="org.example.entities.Produit"/>
+        <mapping class="org.example.exercice1.entities.Produit"/>
+        <mapping class="org.example.exercice1.entities.Image"/>
+        <mapping class="org.example.exercice1.entities.Commentaire"/>
     </session-factory>
 </hibernate-configuration>
