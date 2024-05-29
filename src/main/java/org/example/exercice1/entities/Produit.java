@@ -29,11 +29,14 @@ public class Produit {
     private double prix;
     private int stock;
 
-    @OneToMany(mappedBy = "produit", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Image> images = new ArrayList<>();
+    @ManyToMany(mappedBy = "produits", fetch = FetchType.LAZY)
+    private List<Commande> commandes;
 
     @OneToMany(mappedBy = "produit", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Commentaire> commentaires = new ArrayList<>();
+    private List<Image> images;
+
+    @OneToMany(mappedBy = "produit", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Commentaire> commentaires;
 
 
     public Produit(double prix, int stock, String marque, String reference, LocalDate dateAchat) {

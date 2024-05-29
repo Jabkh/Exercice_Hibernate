@@ -1,5 +1,6 @@
 package org.example.exercice1;
 
+import org.example.exercice1.entities.Commande;
 import org.example.exercice1.entities.Commentaire;
 import org.example.exercice1.entities.Image;
 import org.example.exercice1.entities.Produit;
@@ -11,6 +12,7 @@ import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 
 import org.hibernate.query.Query;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
@@ -29,7 +31,6 @@ public class Test {
             LocalDate dateAchat3 = LocalDate.of(2024, 4, 3);
             LocalDate dateAchat4 = LocalDate.of(2024, 4, 4);
             LocalDate dateAchat5 = LocalDate.of(2024, 4, 5);
-
 
             Produit p1 = new Produit(950.00, 5, "X", "X01", dateAchat1);
             Produit p2 = new Produit(50.00, 5, "Y", "Y02", dateAchat2);
@@ -56,19 +57,18 @@ public class Test {
             produitsPlusDe100Euros(session, 100);
 
             // Lire les dates au clavier pour afficher les produits achetés entre ces deux dates
-//            System.out.println("Entrez la date de début (yyyy-MM-dd): ");
-//            LocalDate dateDebut = LocalDate.parse(scanner.nextLine());
-//            System.out.println("Entrez la date de fin (yyyy-MM-dd): ");
-//            LocalDate dateFin = LocalDate.parse(scanner.nextLine());
-//            produitsAchetePourUnePeriode(session, dateDebut, dateFin);
+            // System.out.println("Entrez la date de début (yyyy-MM-dd): ");
+            // LocalDate dateDebut = LocalDate.parse(scanner.nextLine());
+            // System.out.println("Entrez la date de fin (yyyy-MM-dd): ");
+            // LocalDate dateFin = LocalDate.parse(scanner.nextLine());
+            // produitsAchetePourUnePeriode(session, dateDebut, dateFin);
 
             // Lire la valeur du stock au clavier et retourner les numéros et références des articles dont le stock est inférieur à cette valeur
-//            System.out.println("Entrez la valeur du stock: ");
-//            int stockLimite = scanner.nextInt();
-//            produitsStockLimite(session, stockLimite);
+            // System.out.println("Entrez la valeur du stock: ");
+            // int stockLimite = scanner.nextInt();
+            // produitsStockLimite(session, stockLimite);
 
             // Afficher la valeur du stock des produits d'une marque choisie
-//            scanner.nextLine();
             System.out.println("Entrez la marque des produits pour afficher le stock: ");
             String marque = scanner.nextLine();
             afficherStockParMarque(session, marque);
@@ -82,9 +82,9 @@ public class Test {
             listerProduitsParMarque(session, marqueListe);
 
             // Supprimer les produits d'une marque choisie de la table produit
-//            System.out.println("Entrez la marque des produits à supprimer: ");
-//            String marqueSupprimer = scanner.nextLine();
-//            supprimerProduitsParMarque(session, marqueSupprimer);
+            // System.out.println("Entrez la marque des produits à supprimer: ");
+            // String marqueSupprimer = scanner.nextLine();
+            // supprimerProduitsParMarque(session, marqueSupprimer);
 
             // Ajout d'une image à un produit
             System.out.println("Entrez l'URL de l'image à ajouter: ");
@@ -105,6 +105,25 @@ public class Test {
             // Affichage des produits avec une note de 4 ou plus en commentaire
             afficherProduitsAvecNoteSuperieur(session, 4);
 
+            // Créer une commande
+            System.out.println("Entrez les IDs des produits pour la commande, séparés par des virgules :");
+            scanner.nextLine(); // Consommer la nouvelle ligne restante
+            String[] ids = scanner.nextLine().split(",");
+            List<Produit> produitsCommande = new ArrayList<>();
+            for (String id : ids) {
+                Produit produitCommande = session.get(Produit.class, Integer.parseInt(id.trim()));
+                if (produitCommande != null) {
+                    produitsCommande.add(produitCommande);
+                }
+            }
+            creerCommande(session, produitsCommande);
+
+            // Afficher toutes les commandes
+            afficherToutesLesCommandes(session);
+
+            // Afficher les commandes du jour
+            afficherCommandesDuJour(session);
+
             session.getTransaction().commit();
 
         } catch (Exception e) {
@@ -117,6 +136,8 @@ public class Test {
             sessionFactory.close();
         }
     }
+
+    // Méthodes supplémentaires pour la gestion des produits et commandes
 
     public static void afficherListProduits(Session session) {
         Query<Produit> produitQuery = session.createQuery("from Produit", Produit.class);
@@ -221,4 +242,35 @@ public class Test {
             System.out.println(produit);
         }
     }
+
+    public static void creerCommande(Session session, List<Produit> produits) {
+        double total = produits.stream().mapToDouble(Produit::getPrix).sum();
+        Commande commande = new Commande();
+        commande.setProduits(produits);
+        commande.setTotal(total);
+        commande.setDateCommande(LocalDate.now());
+
+        session.save(commande);
+        System.out.println("Commande créée avec succès : " + commande);
+    }
+
+    public static void afficherToutesLesCommandes(Session session) {
+        Query<Commande> commandeQuery = session.createQuery("from Commande", Commande.class);
+        List<Commande> commandes = commandeQuery.list();
+        System.out.println("Toutes les commandes :");
+        for (Commande commande : commandes) {
+            System.out.println(commande);
+        }
+    }
+
+    public static void afficherCommandesDuJour(Session session) {
+        Query<Commande> commandeQuery = session.createQuery("from Commande where dateCommande = :today", Commande.class);
+        commandeQuery.setParameter("today", LocalDate.now());
+        List<Commande> commandes = commandeQuery.list();
+        System.out.println("Commandes du jour :");
+        for (Commande commande : commandes) {
+            System.out.println(commande);
+        }
+    }
+
 }

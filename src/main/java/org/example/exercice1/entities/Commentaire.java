@@ -28,6 +28,8 @@ public class Commentaire {
     @JoinColumn(name = "produit_id")
     private Produit produit;
 
+
+
     public Commentaire(String contenu, int note, LocalDate dateAjout, Produit produit) {
         this.contenu = contenu;
         this.note = note;

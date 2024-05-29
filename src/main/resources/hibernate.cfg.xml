@@ -7,5 +7,6 @@
         <mapping class="org.example.exercice1.entities.Produit"/>
         <mapping class="org.example.exercice1.entities.Image"/>
         <mapping class="org.example.exercice1.entities.Commentaire"/>
+        <mapping class="org.example.exercice1.entities.Commande"/>
     </session-factory>
 </hibernate-configuration>
